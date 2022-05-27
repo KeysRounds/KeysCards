@@ -16,7 +16,7 @@ namespace KeysCards.Cards
         {
             cardInfo.categories = new CardCategory[]
             {
-                CustomCardCategories.instance.CardCategory("Treasure")
+                KeysCards.Treasure
             };
             gun.damage = 1.5f;
             block.cdMultiplier = 0.5f;

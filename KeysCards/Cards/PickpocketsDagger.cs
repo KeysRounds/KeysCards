@@ -16,7 +16,7 @@ namespace KeysCards.Cards
         {
             cardInfo.categories = new CardCategory[]
             {
-                CustomCardCategories.instance.CardCategory("Treasure")
+                KeysCards.Treasure
             };
             gun.attackSpeed = 0.6666f;
             statModifiers.movementSpeed = 1.1f;

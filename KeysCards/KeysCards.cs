@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using UnityEngine;
-
+using System.Linq;
 
 namespace KeysCards
 {
@@ -29,6 +29,8 @@ namespace KeysCards
         private const string ModName = "KeysCards";
         public const string Version = "0.2.0";
         public const string ModInitials = "KEYS";
+        internal static CardCategory NonTreasure;
+        internal static CardCategory Treasure;
 
         void Awake()
         {
@@ -41,9 +43,9 @@ namespace KeysCards
 
             foreach (var player in PlayerManager.instance.players)
             {
-                if (!ModdingUtils.Extensions.CharacterStatModifiersExtension.GetAdditionalData(player.data.stats).blacklistedCategories.Contains(YvrellsStaff.componentCategory))
+                if (!ModdingUtils.Extensions.CharacterStatModifiersExtension.GetAdditionalData(player.data.stats).blacklistedCategories.Contains(Treasure))
                 {
-                    ModdingUtils.Extensions.CharacterStatModifiersExtension.GetAdditionalData(player.data.stats).blacklistedCategories.Add(YvrellsStaff.componentCategory);
+                    ModdingUtils.Extensions.CharacterStatModifiersExtension.GetAdditionalData(player.data.stats).blacklistedCategories.Add(Treasure);
                 }
                 if (!ModdingUtils.Extensions.CharacterStatModifiersExtension.GetAdditionalData(player.data.stats).blacklistedCategories.Contains(IronCarapace.componentCategory))
                 {
@@ -57,6 +59,8 @@ namespace KeysCards
         {
 
             instance = this;
+            NonTreasure = CustomCardCategories.instance.CardCategory("__NonTreasure__");
+            Treasure = CustomCardCategories.instance.CardCategory("Treasure");
 
             CustomCard.BuildCard<Nimble>();
             CustomCard.BuildCard<LootBox>();
@@ -87,6 +91,16 @@ namespace KeysCards
             CustomCard.BuildCard<IronPincers>();
             CustomCard.BuildCard<Bounce>();
             GameModeManager.AddHook(GameModeHooks.HookGameStart, GameStart);
+
+            instance.ExecuteAfterSeconds(1, () => {
+                foreach (var card in UnboundLib.Utils.CardManager.cards.Values)
+                {
+                    if (!card.cardInfo.categories.Contains(Treasure))
+                    {
+                        card.cardInfo.categories = card.cardInfo.categories.AddToArray(NonTreasure);
+                    }
+                }
+            });
         }
     }
 }

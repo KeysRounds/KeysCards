@@ -12,12 +12,11 @@ namespace KeysCards.Cards
 {
     class YvrellsStaff : CustomCard
     {
-        internal static CardCategory componentCategory = CustomCardCategories.instance.CardCategory("Treasure");
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers, Block block)
         {
             cardInfo.categories = new CardCategory[]
             {
-                CustomCardCategories.instance.CardCategory("Treasure")
+                KeysCards.Treasure
             };
             gun.knockback = 1.4f;
             gun.projectileColor = new Color(112,131,255);
