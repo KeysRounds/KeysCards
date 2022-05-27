@@ -1,10 +1,13 @@
-﻿using System;
+﻿using ModdingUtils.Extensions;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnboundLib;
 using UnboundLib.Cards;
+using UnboundLib.GameModes;
 using UnityEngine;
 
 namespace KeysCards.Cards
@@ -16,7 +19,7 @@ namespace KeysCards.Cards
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            player.gameObject.AddComponent<TreasureTroveMono>();
+            GameModeManager.AddOnceHook(GameModeHooks.HookPlayerPickStart, (gm) => { KeysCards.instance.StartCoroutine(TreasurePick(player)); return new List<object>().GetEnumerator(); ; });
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -49,6 +52,27 @@ namespace KeysCards.Cards
         public override string GetModName()
         {
             return KeysCards.ModInitials;
+        }
+
+        public static IEnumerator TreasurePick(Player player)
+        {
+            while (!CardChoice.instance.IsPicking) yield return null;
+            if (CardChoice.instance.pickrID == player.playerID)
+            {
+                player.data.stats.GetAdditionalData().blacklistedCategories.Add(KeysCards.NonTreasure);
+                player.data.stats.GetAdditionalData().blacklistedCategories.Remove(KeysCards.Treasure);
+                GameModeManager.AddOnceHook(GameModeHooks.HookPlayerPickEnd,(gm) => EndTreasurePick(player));
+            }
+            else
+                GameModeManager.AddOnceHook(GameModeHooks.HookPlayerPickStart, (gm) => { KeysCards.instance.StartCoroutine(TreasurePick(player)); return new List<object>().GetEnumerator(); });
+            yield break;
+        }
+
+        public static IEnumerator EndTreasurePick(Player player)
+        {
+            player.data.stats.GetAdditionalData().blacklistedCategories.Add(KeysCards.Treasure);
+            player.data.stats.GetAdditionalData().blacklistedCategories.Remove(KeysCards.NonTreasure);
+            yield break;
         }
     }
 }

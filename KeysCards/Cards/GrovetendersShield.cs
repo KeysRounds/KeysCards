@@ -16,7 +16,7 @@ namespace KeysCards.Cards
         {
             cardInfo.categories = new CardCategory[]
             {
-                CustomCardCategories.instance.CardCategory("Treasure")
+                KeysCards.Treasure
             };
             block.additionalBlocks = 3;
             statModifiers.health = 1.5f;
